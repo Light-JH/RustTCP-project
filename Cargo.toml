@@ -1,2 +1,5 @@
 [workspace]
 members = ["client"]
+
+[workspace.dependencies]
+mio = "0.8.8"
