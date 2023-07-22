@@ -1,24 +1,26 @@
 use clap::{Parser, Subcommand};
 use mio::net::TcpStream;
 use std::io::Write;
-use std::net::SocketAddr;
+use std::net::{IpAddr, SocketAddr};
 use std::str;
 use std::time::Duration;
-
-const SERVER_ADDR: &str = "127.0.0.1";
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 struct Cli {
-    /// port of server to connect to
+    /// Port of server to connect to
     #[arg(short, long, value_name = "PORT")]
     port: u32,
+
+    /// Server IP address to connect to
+    #[arg(short, long, value_name = "IP_ADDR", default_value = "127.0.0.1")]
+    address: IpAddr,
 }
 
 fn main() {
     let cli = Cli::parse();
     //connect to the server
-    let server_addr: SocketAddr = format!("{}:{}", SERVER_ADDR, cli.port)
+    let server_addr: SocketAddr = format!("{}:{}", cli.address, cli.port)
         .parse()
         .expect("Invalid server address");
     println!("Connect to {server_addr}");
