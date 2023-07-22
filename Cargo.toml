@@ -2,4 +2,5 @@
 members = ["client"]
 
 [workspace.dependencies]
-mio = { version = "0.8.8", features = ["net"] }
+clap = { version = "4.3.19", features = ["derive"] }
+mio = { version = "0.8.8", features = ["net", "os-poll"] }
