@@ -2,7 +2,6 @@ use clap::{Parser, Subcommand};
 use mio::net::TcpStream;
 use std::io::Write;
 use std::net::{IpAddr, SocketAddr};
-use std::str;
 use std::time::Duration;
 
 #[derive(Parser)]
