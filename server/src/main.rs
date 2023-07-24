@@ -10,7 +10,7 @@ use std::net::SocketAddr;
 #[command(author, version, about, long_about = None)]
 struct Cli {
     /// Port running the server on
-    #[arg(short, long, value_name = "PORT")]
+    #[arg(short, long, value_name = "PORT", default_value = "0")]
     port: u32,
 }
 
@@ -30,6 +30,9 @@ fn main() {
     //Create storage for events
     let mut events = Events::with_capacity(128);
     let mut server = TcpListener::bind(addr).unwrap();
+    let addr = server.local_addr().unwrap();
+    info!("Server running at address {}", addr);
+
     // start listening for incoming connections
     poll.registry()
         .register(&mut server, SERVER, Interest::READABLE)
@@ -53,6 +56,7 @@ fn main() {
                     poll.registry()
                         .register(&mut stream, token, Interest::READABLE)
                         .unwrap();
+                    info!("client {} connected!", addr);
                     clients.insert(token, (stream, addr));
                 }
                 token => {
@@ -63,8 +67,8 @@ fn main() {
                     let msg_len = stream.read(&mut buf).unwrap();
                     if msg_len == 0 {
                         poll.registry().deregister(stream).unwrap();
+                        info!("client {} disconnect", addr);
                         clients.remove(&token);
-                        info!("client disconnect")
                     } else {
                         if let Ok(utf8_str) = std::str::from_utf8(&buf) {
                             info!("{}:{}", addr, utf8_str)
