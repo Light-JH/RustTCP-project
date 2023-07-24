@@ -1,4 +1,5 @@
-use clap::{Parser};
+use clap::Parser;
+use log::*;
 use mio::net::{TcpListener, TcpStream};
 use mio::{Events, Interest, Poll, Token};
 use std::collections::HashMap;
@@ -17,6 +18,7 @@ struct Cli {
 const SERVER: Token = Token(0);
 
 fn main() {
+    env_logger::init();
     let cli = Cli::parse();
     //connect to the server
     let addr: SocketAddr = format!("127.0.0.1:{}", cli.port)
@@ -26,14 +28,8 @@ fn main() {
     // Create a poll instance.
     let mut poll = Poll::new().unwrap();
     //Create storage for events
-
     let mut events = Events::with_capacity(128);
-
-    //set up the server socket
-    // let addr =
-    // let addr = "127.0.0.1:13265".parse().unwrap();
     let mut server = TcpListener::bind(addr).unwrap();
-
     // start listening for incoming connections
     poll.registry()
         .register(&mut server, SERVER, Interest::READABLE)
@@ -46,7 +42,6 @@ fn main() {
     loop {
         // Poll Mio for events, blocking until we get an event
         poll.poll(&mut events, None).unwrap();
-
         //process each event, event is tell if there is things in it, it could be client or server token, from token,
         // we can get stream and addr from the map
         for event in events.iter() {
@@ -69,11 +64,10 @@ fn main() {
                     if msg_len == 0 {
                         poll.registry().deregister(stream).unwrap();
                         clients.remove(&token);
-                        println!("client disconnect")
+                        info!("client disconnect")
                     } else {
-                        match std::str::from_utf8(&buf) {
-                            Ok(utf8_str) => println!("{}:{}", addr, utf8_str),
-                            Err(_) => println!(),
+                        if let Ok(utf8_str) = std::str::from_utf8(&buf) {
+                            info!("{}:{}", addr, utf8_str)
                         }
                     }
                 }

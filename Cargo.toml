@@ -3,4 +3,6 @@ members = ["client", "server"]
 
 [workspace.dependencies]
 clap = { version = "4.3.19", features = ["derive"] }
+env_logger = { version = "0.10.0" }
+log = { version = "0.4.19" }
 mio = { version = "0.8.8", features = ["net", "os-poll"] }
