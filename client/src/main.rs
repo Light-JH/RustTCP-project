@@ -1,4 +1,5 @@
-use clap::{Parser};
+use clap::Parser;
+use log::*;
 use mio::net::TcpStream;
 use std::io::Write;
 use std::net::{IpAddr, SocketAddr};
@@ -17,18 +18,19 @@ struct Cli {
 }
 
 fn main() {
+    env_logger::init();
     let cli = Cli::parse();
     //connect to the server
     let server_addr: SocketAddr = format!("{}:{}", cli.address, cli.port)
         .parse()
         .expect("Invalid server address");
-    println!("Connect to {server_addr}");
+    info!("Connect to {server_addr}");
 
     let mut stream = TcpStream::connect(server_addr).expect("Failed to connect to server");
 
     loop {
         std::thread::sleep(Duration::from_millis(500));
-        println!("Ping");
+        info!("Ping");
         stream.write_all(b"ping").expect("Failed to write");
     }
 }
