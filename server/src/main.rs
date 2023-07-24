@@ -1,9 +1,7 @@
-use clap::{Parser, Subcommand};
-use mio::event::Event;
+use clap::{Parser};
 use mio::net::{TcpListener, TcpStream};
 use mio::{Events, Interest, Poll, Token};
 use std::collections::HashMap;
-use std::error::Error;
 use std::io::Read;
 use std::net::SocketAddr;
 
