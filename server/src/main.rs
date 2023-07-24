@@ -7,10 +7,24 @@ use std::error::Error;
 use std::io::Read;
 use std::net::SocketAddr;
 
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+struct Cli {
+    /// Port running the server on
+    #[arg(short, long, value_name = "PORT")]
+    port: u32,
+}
+
 // the server should print out message from client and when they connect and disconnect
 const SERVER: Token = Token(0);
 
 fn main() {
+    let cli = Cli::parse();
+    //connect to the server
+    let addr: SocketAddr = format!("127.0.0.1:{}", cli.port)
+        .parse()
+        .expect("Invalid server address");
+
     // Create a poll instance.
     let mut poll = Poll::new().unwrap();
     //Create storage for events
@@ -18,7 +32,8 @@ fn main() {
     let mut events = Events::with_capacity(128);
 
     //set up the server socket
-    let addr = "127.0.0.1:13265".parse().unwrap();
+    // let addr =
+    // let addr = "127.0.0.1:13265".parse().unwrap();
     let mut server = TcpListener::bind(addr).unwrap();
 
     // start listening for incoming connections
